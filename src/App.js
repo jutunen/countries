@@ -1,7 +1,8 @@
 import {useState, useEffect} from "react";
 import './App.css';
 import axios from 'axios';
-import countries from './all_countries.json';
+import COUNTRIES from './all_countries.json';
+import * as cloneDeep from 'lodash.clonedeep';
 
 // https://restcountries.eu/rest/v2/all
 
@@ -11,13 +12,30 @@ function App() {
   const UNCATEGORIZED_REGION = "Uncategorized";
   const [country,setCountry] = useState("");
   const [region,setRegion] = useState(ALL_REGIONS_SELECTED);
+  const [countries,setCountries] = useState(COUNTRIES);
+  const [sortBool,setSortBool] = useState(false);
 
-  let regionsSet = new Set(countries.map(x => x.subregion));
+  /*
+  let countriesClone = cloneDeep(countries);
+  let fixedCountries = countries.map( x => {
+    if( x.subregion === "" ) {
+      return {
+        ...x,
+        subregion: UNCATEGORIZED_REGION
+      }
+    }
+  });
+  setCountries(fixedCountries);
+  */
+
+  let regionsSet = new Set(countries.map(y => y.subregion));
   let regions = Array.from(regionsSet);
   regions.push(ALL_REGIONS_SELECTED);
   let indexOfEmptyValue = regions.indexOf("");
   regions[indexOfEmptyValue] = UNCATEGORIZED_REGION;
   regions.sort();
+
+  //console.log(countries);
 
   function handleCountry(event) {
     setCountry(event.target.value);
@@ -86,8 +104,60 @@ function App() {
     )
   }
 
-  function Table(props) {
+  function TableHeader() {
+
+    function sortByCountryName() {
+      let countriesClone = cloneDeep(countries);
+      countriesClone.sort((a,b) => {
+        if(a.name < b.name) { return (sortBool ? 1 : -1) }
+        if(a.name > b.name) { return (sortBool ? -1 : 1) }
+        return 0;
+      });
+      setCountries(countriesClone);
+      setSortBool(!sortBool);
+    }
+
+    function sortByRegion() {
+      let countriesClone = cloneDeep(countries);
+      countriesClone.sort((a,b) => {
+        if(a.subregion < b.subregion) { return (sortBool ? 1 : -1) }
+        if(a.subregion > b.subregion) { return (sortBool ? -1 : 1) }
+        return 0;
+      });
+      setCountries(countriesClone);
+      setSortBool(!sortBool);
+    }
+
+    function sortByPopulation() {
+      let countriesClone = cloneDeep(countries);
+      countriesClone.sort((a,b) => { return (sortBool ? a.population - b.population : b.population - a.population) } );
+      setCountries(countriesClone);
+      setSortBool(!sortBool);
+    }
+
     return (
+      <div className="countryline">
+        <div className="countrydetail flag">
+
+        </div>
+        <div className="countrydetail name" onClick={sortByCountryName}>
+          Country
+        </div>
+        <div className="countrydetail subregion" onClick={sortByRegion}>
+          Region
+        </div>
+        <div className="countrydetail population" onClick={sortByPopulation}>
+          Population
+        </div>
+      </div>
+    )
+  }
+
+  function Table(props) {
+
+    return (
+      <>
+      <TableHeader />
       <div id="table">
         {/*{props.countries.slice(0, props.countries.length).map( x =>*/}
         {props.countries.filter( x => filterFunction(x.name, x.subregion, props.searchStr, props.region) ).map( x =>
@@ -97,13 +167,14 @@ function App() {
                 key={x.name}
                 flag={x.flag}
                 name={x.name}
-                subregion={x.subregion}
+                subregion={x.subregion === "" ? UNCATEGORIZED_REGION : x.subregion}
                 population={x.population}>
               </TableRow>
             )
           })
         }
       </div>
+      </>
     )
   }
 
