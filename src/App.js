@@ -1,4 +1,4 @@
-import {useState, useEffect} from "react";
+import {useState, useEffect, useRef} from "react";
 import './App.css';
 import axios from 'axios';
 import COUNTRIES from './all_countries.json';
@@ -89,6 +89,7 @@ function App() {
     return (
       <div className="countryline">
         <div className="countrydetail flag">
+          {/*<img src={props.flag} alt={""} height={50} width={100} />*/}
           <img src={""} alt={""} height={50} width={100} />
         </div>
         <div className="countrydetail name">
@@ -136,17 +137,17 @@ function App() {
     }
 
     return (
-      <div className="countryline">
-        <div className="countrydetail flag">
+      <div id="tableHeader" className="countryline">
+        <div className="tableHeaderCell flag">
 
         </div>
-        <div className="countrydetail name" onClick={sortByCountryName}>
+        <div className="tableHeaderCell name" onClick={sortByCountryName}>
           Country
         </div>
-        <div className="countrydetail subregion" onClick={sortByRegion}>
+        <div className="tableHeaderCell subregion" onClick={sortByRegion}>
           Region
         </div>
-        <div className="countrydetail population" onClick={sortByPopulation}>
+        <div className="tableHeaderCell population" onClick={sortByPopulation}>
           Population
         </div>
       </div>
@@ -156,42 +157,49 @@ function App() {
   function Table(props) {
 
     return (
-      <>
-      <TableHeader />
-      <div id="table">
-        {/*{props.allCountries.slice(0, props.allCountries.length).map( x =>*/}
-        {props.allCountries.filter( x => filterFunction(x.name, x.subregion, props.searchStr, props.selectedRegion) ).map( x =>
-          {
-            return (
-              <TableRow
-                key={x.name}
-                flag={x.flag}
-                name={x.name}
-                subregion={x.subregion === "" ? UNCATEGORIZED_REGION : x.subregion}
-                population={x.population}>
-              </TableRow>
-            )
-          })
-        }
+      <div id="tableContainer">
+        <TableHeader />
+        <div id="tableBody">
+          {/*{props.allCountries.slice(0, props.allCountries.length).map( x =>*/}
+          {props.allCountries.filter( x => filterFunction(x.name, x.subregion, props.searchStr, props.selectedRegion) ).map( x =>
+            {
+              return (
+                <TableRow
+                  key={x.name}
+                  flag={x.flag}
+                  name={x.name}
+                  subregion={x.subregion === "" ? UNCATEGORIZED_REGION : x.subregion}
+                  population={x.population}>
+                </TableRow>
+              )
+            })
+          }
+        </div>
       </div>
-      </>
     )
   }
 
   return (
-    <>
+    <div id="mainContainer">
       <div className="controls">
-        <input
-          type="text"
-          value={searchStr}
-          onChange={ev => handleCountry(ev)}
-        />
-        <select
-          value={selectedRegion}
-          onChange={ev => changeRegion(ev)}
-        >
-          {regions.map( region => <option key={region} value={region}>{region}</option> )}
-        </select>
+        <div class="control_container">
+          Search for country by name:
+          <input
+            type="text"
+            value={searchStr}
+            onChange={ev => handleCountry(ev)}
+            placeholder="enter country name here"
+          />
+        </div>
+        <div class="control_container">
+          Select region:
+          <select
+            value={selectedRegion}
+            onChange={ev => changeRegion(ev)}
+          >
+            {regions.map( region => <option key={region} value={region}>{region}</option> )}
+          </select>
+        </div>
       </div>
       <div>
         <Table
@@ -201,7 +209,7 @@ function App() {
         >
         </Table>
       </div>
-    </>
+    </div>
   );
 }
 
