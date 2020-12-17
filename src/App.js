@@ -14,6 +14,8 @@ function App() {
   const [selectedRegion,setSelectedRegion] = useState(ALL_REGIONS_SELECTED);
   const [allCountries,setAllCountries] = useState(COUNTRIES);
   const [sortBool,setSortBool] = useState(false);
+  const [showDetails,setShowDetails] = useState(false);
+  const [countryCode,setCountryCode] = useState(-1); // null = kosovo
 
   /*
   let allCountriesClone = cloneDeep(allCountries);
@@ -43,6 +45,35 @@ function App() {
 
   function changeRegion(event) {
     setSelectedRegion(event.target.value);
+  }
+
+  function showCountryDetails(code) {
+    setCountryCode(code);
+    setShowDetails(true);
+  }
+
+  function CountryDetails(props) {
+
+    if(!props.show) {
+      return null;
+    }
+
+    console.log(props.code);
+    let countryData = allCountries.find(x => x.numericCode === props.code);
+    console.log(countryData);
+
+    return (
+        <div className="countryDetailsBackground" onClick={ props.closeCb }>
+          <div className="countryDetails" onClick={ ev => ev.stopPropagation() }>
+            <p> {countryData.name} </p>
+            <p> Capital: {countryData.capital} </p>
+            <p> Population: {countryData.population} </p>
+            <p> Languages: </p>
+            {countryData.languages.map( lang => <p key={lang.name}>{lang.name}</p> )}
+            <button className="button" type="button" onClick={ props.closeCb }> Close </button>
+          </div>
+        </div>
+    )
   }
 
   function filterFunction(countryName, countryRegion, searchStr, selectedRegion) {
@@ -87,7 +118,7 @@ function App() {
 
   function TableRow(props) {
     return (
-      <div className="countryline">
+      <div className="countryline" onClick={() => showCountryDetails(props.code)}>
         <div className="countrydetail flag">
           {/*<img src={props.flag} alt={""} height={50} width={100} />*/}
           <img src={""} alt={""} height={50} width={100} />
@@ -169,7 +200,9 @@ function App() {
                   flag={x.flag}
                   name={x.name}
                   subregion={x.subregion === "" ? UNCATEGORIZED_REGION : x.subregion}
-                  population={x.population}>
+                  population={x.population}
+                  code={x.numericCode}
+                >
                 </TableRow>
               )
             })
@@ -182,7 +215,7 @@ function App() {
   return (
     <div id="mainContainer">
       <div className="controls">
-        <div class="control_container">
+        <div className="control_container">
           Search for country by name:
           <input
             type="text"
@@ -191,7 +224,7 @@ function App() {
             placeholder="enter country name here"
           />
         </div>
-        <div class="control_container">
+        <div className="control_container">
           Select region:
           <select
             value={selectedRegion}
@@ -209,6 +242,12 @@ function App() {
         >
         </Table>
       </div>
+      <CountryDetails
+        code={countryCode}
+        show={showDetails}
+        closeCb={() => setShowDetails(false)}
+      >
+      </CountryDetails>
     </div>
   );
 }
