@@ -1,3 +1,4 @@
+import {useState, useEffect} from "react";
 import './App.css';
 import axios from 'axios';
 import countries from './all_countries.json';
@@ -6,11 +7,40 @@ import countries from './all_countries.json';
 
 function App() {
 
-  function CountryLine(props) {
+  const [country,setCountry] = useState("");
+
+  function handleCountry(event) {
+    setCountry(event.target.value);
+  }
+
+  function filterFunction(country, searchStr) {
+
+    if(!searchStr) {
+      return false;
+    }
+
+    let regex;
+
+    if(searchStr.length === 1) {
+      regex = new RegExp("^" + searchStr, "gi");
+    } else {
+      regex = new RegExp(searchStr, "gi");
+    }
+
+    let rval = country.match(regex);
+
+    if(rval === null) {
+      return false;
+    }
+
+    return true;
+  }
+
+  function TableRow(props) {
     return (
       <div className="countryline">
         <div className="countrydetail flag">
-          <img src={props.flag} alt={""} height={50} width={100} />
+          <img src={""} alt={""} height={50} width={100} />
         </div>
         <div className="countrydetail name">
           {props.name}
@@ -25,21 +55,44 @@ function App() {
     )
   }
 
+  function Table(props) {
+    return (
+      <div id="table">
+        {/*{props.countries.slice(0, props.countries.length).map( x =>*/}
+        {props.countries.filter( x => filterFunction(x.name, props.searchStr) ).map( x =>
+          {
+            return (
+              <TableRow
+                key={x.name}
+                flag={x.flag}
+                name={x.name}
+                subregion={x.subregion}
+                population={x.population}>
+              </TableRow>
+            )
+          })
+        }
+      </div>
+    )
+  }
+
   return (
-    <div className="App">
-      {countries.slice(0, 10).map( x => {
-        return (
-          <CountryLine
-            key={x.name}
-            flag={x.flag}
-            name={x.name}
-            subregion={x.subregion}
-            population={x.population}>
-          </CountryLine>
-        )
-      })
-      }
-    </div>
+    <>
+      <div className="controls">
+        <input
+          type="text"
+          value={country}
+          onChange={ev => handleCountry(ev)}
+        />
+      </div>
+      <div>
+        <Table
+          countries={countries}
+          searchStr={country}
+        >
+        </Table>
+      </div>
+    </>
   );
 }
 
