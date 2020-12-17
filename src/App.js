@@ -10,14 +10,14 @@ function App() {
 
   const ALL_REGIONS_SELECTED = "All";
   const UNCATEGORIZED_REGION = "Uncategorized";
-  const [country,setCountry] = useState("");
-  const [region,setRegion] = useState(ALL_REGIONS_SELECTED);
-  const [countries,setCountries] = useState(COUNTRIES);
+  const [searchStr,setSearchStr] = useState("");
+  const [selectedRegion,setSelectedRegion] = useState(ALL_REGIONS_SELECTED);
+  const [allCountries,setAllCountries] = useState(COUNTRIES);
   const [sortBool,setSortBool] = useState(false);
 
   /*
-  let countriesClone = cloneDeep(countries);
-  let fixedCountries = countries.map( x => {
+  let allCountriesClone = cloneDeep(allCountries);
+  let fixedCountries = allCountries.map( x => {
     if( x.subregion === "" ) {
       return {
         ...x,
@@ -25,24 +25,24 @@ function App() {
       }
     }
   });
-  setCountries(fixedCountries);
+  setAllCountries(fixedCountries);
   */
 
-  let regionsSet = new Set(countries.map(y => y.subregion));
+  let regionsSet = new Set(allCountries.map(y => y.subregion));
   let regions = Array.from(regionsSet);
   regions.push(ALL_REGIONS_SELECTED);
   let indexOfEmptyValue = regions.indexOf("");
   regions[indexOfEmptyValue] = UNCATEGORIZED_REGION;
   regions.sort();
 
-  //console.log(countries);
+  //console.log(allCountries);
 
   function handleCountry(event) {
-    setCountry(event.target.value);
+    setSearchStr(event.target.value);
   }
 
   function changeRegion(event) {
-    setRegion(event.target.value);
+    setSelectedRegion(event.target.value);
   }
 
   function filterFunction(countryName, countryRegion, searchStr, selectedRegion) {
@@ -107,31 +107,31 @@ function App() {
   function TableHeader() {
 
     function sortByCountryName() {
-      let countriesClone = cloneDeep(countries);
-      countriesClone.sort((a,b) => {
+      let allCountriesClone = cloneDeep(allCountries);
+      allCountriesClone.sort((a,b) => {
         if(a.name < b.name) { return (sortBool ? 1 : -1) }
         if(a.name > b.name) { return (sortBool ? -1 : 1) }
         return 0;
       });
-      setCountries(countriesClone);
+      setAllCountries(allCountriesClone);
       setSortBool(!sortBool);
     }
 
     function sortByRegion() {
-      let countriesClone = cloneDeep(countries);
-      countriesClone.sort((a,b) => {
+      let allCountriesClone = cloneDeep(allCountries);
+      allCountriesClone.sort((a,b) => {
         if(a.subregion < b.subregion) { return (sortBool ? 1 : -1) }
         if(a.subregion > b.subregion) { return (sortBool ? -1 : 1) }
         return 0;
       });
-      setCountries(countriesClone);
+      setAllCountries(allCountriesClone);
       setSortBool(!sortBool);
     }
 
     function sortByPopulation() {
-      let countriesClone = cloneDeep(countries);
-      countriesClone.sort((a,b) => { return (sortBool ? a.population - b.population : b.population - a.population) } );
-      setCountries(countriesClone);
+      let allCountriesClone = cloneDeep(allCountries);
+      allCountriesClone.sort((a,b) => { return (sortBool ? a.population - b.population : b.population - a.population) } );
+      setAllCountries(allCountriesClone);
       setSortBool(!sortBool);
     }
 
@@ -159,8 +159,8 @@ function App() {
       <>
       <TableHeader />
       <div id="table">
-        {/*{props.countries.slice(0, props.countries.length).map( x =>*/}
-        {props.countries.filter( x => filterFunction(x.name, x.subregion, props.searchStr, props.region) ).map( x =>
+        {/*{props.allCountries.slice(0, props.allCountries.length).map( x =>*/}
+        {props.allCountries.filter( x => filterFunction(x.name, x.subregion, props.searchStr, props.selectedRegion) ).map( x =>
           {
             return (
               <TableRow
@@ -183,11 +183,11 @@ function App() {
       <div className="controls">
         <input
           type="text"
-          value={country}
+          value={searchStr}
           onChange={ev => handleCountry(ev)}
         />
         <select
-          value={region}
+          value={selectedRegion}
           onChange={ev => changeRegion(ev)}
         >
           {regions.map( region => <option key={region} value={region}>{region}</option> )}
@@ -195,9 +195,9 @@ function App() {
       </div>
       <div>
         <Table
-          countries={countries}
-          searchStr={country}
-          region={region}
+          allCountries={allCountries}
+          searchStr={searchStr}
+          selectedRegion={selectedRegion}
         >
         </Table>
       </div>
