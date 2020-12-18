@@ -3,6 +3,7 @@ import './App.css';
 import axios from 'axios';
 import COUNTRIES from './all_countries.json';
 import {Table} from "./Table.js";
+import format from 'number-format.js';
 
 // https://restcountries.eu/rest/v2/all
 
@@ -84,7 +85,7 @@ function App() {
               </div>
               <div className="detailsSubSection">
                 <p> population: </p>
-                <h4>{countryData.population} </h4>
+                <h4>{format('### ###.',countryData.population)}</h4>
               </div>
             </div>
             <div className="detailsSection">

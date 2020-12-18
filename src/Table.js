@@ -1,6 +1,7 @@
 import './App.css';
 import * as cloneDeep from 'lodash.clonedeep';
 import {ALL_REGIONS_SELECTED, UNCATEGORIZED_REGION} from "./App.js";
+import format from 'number-format.js';
 
 function filterFunction(countryName, countryRegion, searchStr, selectedRegion) {
 
@@ -55,7 +56,7 @@ function TableRow(props) {
         {props.subregion}
       </div>
       <div className="countrydetail population">
-        {props.population}
+        {format('### ###.',props.population)}
       </div>
     </div>
   )
