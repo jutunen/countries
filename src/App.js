@@ -75,11 +75,28 @@ function App() {
     return (
         <div className="countryDetailsBackground" onClick={ props.closeCb }>
           <div className="countryDetails" onClick={ ev => ev.stopPropagation() }>
-            <p> {countryData.name} </p>
-            <p> Capital: {countryData.capital} </p>
-            <p> Population: {countryData.population} </p>
-            <p> Languages: </p>
-            {countryData.languages.map( lang => <p key={lang.name}>{lang.name}</p> )}
+            <img src={countryData.flag} alt={""} width={250} />
+            <h3> {countryData.name} </h3>
+            <div className="detailsSection">
+              <div className="detailsSubSection">
+                <p> capital: </p>
+                <h4> {countryData.capital} </h4>
+              </div>
+              <div className="detailsSubSection">
+                <p> population: </p>
+                <h4>{countryData.population} </h4>
+              </div>
+            </div>
+            <div className="detailsSection">
+              <div className="detailsSubSection">
+                <p> languages: </p>
+                {countryData.languages.map( lang => <h4 key={lang.name}>{lang.name}</h4> )}
+              </div>
+              <div className="detailsSubSection">
+                <p> currencies: </p>
+                {countryData.currencies.map( curr => <h4 key={curr.name}>{curr.name}</h4> )}
+              </div>
+            </div>
             <button className="button" type="button" onClick={ props.closeCb }> Close </button>
           </div>
         </div>

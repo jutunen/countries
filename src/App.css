@@ -11,7 +11,7 @@ div.countryline:nth-child(odd) {
 }
 
 div.countryline:nth-child(even) {
-  background-color: white;
+  background-color: lavender;
 }
 
 div.countryline:hover {
@@ -84,7 +84,7 @@ div.control_container {
   flex-direction: column;
 }
 
-.countryDetailsBackground {
+div.countryDetailsBackground {
   position: fixed;
   top: 0;
   left: 0;
@@ -93,7 +93,7 @@ div.control_container {
   background: rgba(0, 0, 0, 0.0);
 }
 
-.countryDetails {
+div.countryDetails {
   position: absolute;
   display: flex;
   flex-direction: column;
@@ -105,4 +105,20 @@ div.control_container {
   border: 2px solid gray;
   white-space: pre-line;
   text-align: center;
+  align-items: center;
+}
+
+div.countryDetails p {
+  line-height: 10%;
+}
+
+div.detailsSection {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: flex-start;
+}
+
+div.detailsSubSection {
+  margin: 10px 50px;
 }
