@@ -8,6 +8,7 @@ import { Default } from 'react-spinners-css';
 
 export const ALL_REGIONS_SELECTED = "all regions";
 export const UNCATEGORIZED_REGION = "uncategorized";
+const DEFAULT_HASH = "";
 
 function App() {
 
@@ -28,6 +29,7 @@ function App() {
                                             timeout: 10000
                                           });
           setAllCountries(result.data);
+          hashChangeHandler();
         } catch (err) {
           console.error(err);
           alert("Data fetching failed.\nPlease try again later.");
@@ -41,7 +43,6 @@ function App() {
 
   useEffect(() => {
     // subscribe to hash changes
-    window.location.hash = "main";
     window.addEventListener("hashchange", hashChangeHandler);
     return () => window.removeEventListener("hashchange", hashChangeHandler);
   },[]);
@@ -59,7 +60,7 @@ function App() {
 
   function hashChangeHandler() {
     const hash = window.location.hash.replace(/^#/, "");
-    if(hash !== "main") {
+    if(hash !== DEFAULT_HASH) {
       setCountryCode(hash);
     } else {
       setCountryCode(undefined);
@@ -75,7 +76,8 @@ function App() {
     let countryData = allCountries.find(x => x.numericCode === props.code);
 
     if(countryData === undefined) {
-      window.location.hash = "main";
+      console.log("countryData undefined!");
+      window.location.hash = DEFAULT_HASH;
       return null;
     }
 
@@ -178,7 +180,7 @@ function App() {
       </div>
       <CountryDetails
         code={countryCode}
-        closeCb={() => window.location.hash = "main"}
+        closeCb={() => window.location.hash = DEFAULT_HASH}
       />
       <ProgressIndicator
         visible={requestIsPending}
