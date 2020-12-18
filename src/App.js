@@ -18,14 +18,12 @@ function App() {
   const [countryCode,setCountryCode] = useState(-1); // null = kosovo
   const [regions,setRegions] = useState([]);
 
-/*
   useEffect(() => {
     // subscribe to hash changes
     //window.location.hash = "main";
     window.addEventListener("hashchange", router);
     return () => window.removeEventListener("hashchange", router);
   },[]);
-*/
 
   /*
   let allCountriesClone = cloneDeep(allCountries);
@@ -50,12 +48,12 @@ function App() {
     setRegions(regionsArray);
   },[allCountries]);
 
-/*
+
   function router() {
-    const newView = window.location.hash.replace(/^#/, "");
-    console.log(newView);
+    //const newView = window.location.hash.replace(/^#/, "");
+    //console.log(newView);
+    console.log("Hep!");
   }
-*/
 
   function showCountryDetails(code) {
     setCountryCode(code);
@@ -227,12 +225,21 @@ function App() {
       <div className="controls">
         <div className="control_container">
           Search for country by name:
-          <input
-            type="text"
-            value={searchStr}
-            onChange={ev => setSearchStr(ev.target.value)}
-            placeholder="enter country name here"
-          />
+          <div className="control_subcontainer">
+            <input
+              type="text"
+              value={searchStr}
+              onChange={ev => setSearchStr(ev.target.value)}
+              placeholder="enter country name here"
+            />
+            <button
+              type="button"
+              className="button"
+              onClick={() => setSearchStr("")}
+            >
+              Clear
+            </button>
+          </div>
         </div>
         <div className="control_container">
           Select region:
