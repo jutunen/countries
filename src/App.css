@@ -148,3 +148,7 @@ div.detailsSection {
 div.detailsSubSection {
   margin: 10px 50px;
 }
+
+div.control_subcontainer input {
+  width:250px;
+}

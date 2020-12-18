@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import './App.css';
 import axios from 'axios';
 // import COUNTRIES from './all_countries.json'; // country data in file
