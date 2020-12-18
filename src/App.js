@@ -1,9 +1,10 @@
-import {useState, useEffect, useRef} from "react";
+import { useState, useEffect, useRef } from "react";
 import './App.css';
 import axios from 'axios';
-import COUNTRIES from './all_countries.json';
-import {Table} from "./Table.js";
+// import COUNTRIES from './all_countries.json'; // country data in file
+import { Table } from "./Table.js";
 import format from 'number-format.js';
+import { Default } from 'react-spinners-css';
 
 export const ALL_REGIONS_SELECTED = "all regions";
 export const UNCATEGORIZED_REGION = "uncategorized";
@@ -16,23 +17,24 @@ function App() {
   const [sortBool,setSortBool] = useState(false);
   const [countryCode,setCountryCode] = useState(undefined); // null = kosovo
   const [regions,setRegions] = useState([]);
+  const [requestIsPending,setRequestIsPending] = useState(false);
 
   useEffect(() => {
       const fetchData = async () => {
-        //setRequestIsPending(true);
+        setRequestIsPending(true);
         try {
           const result = await axios.get('https://restcountries.eu/rest/v2/all',
                                           {
                                             timeout: 10000
                                           });
-          //console.log(result);
           setAllCountries(result.data);
         } catch (err) {
           console.error(err);
           alert("Data fetching failed.\nPlease try again later.");
-          //setRequestIsPending(false);
+          //setAllCountries(COUNTRIES); // <-- backup possibility, use local file
+          setRequestIsPending(false);
         }
-        //setRequestIsPending(false);
+        setRequestIsPending(false);
       };
       fetchData();
     }, []);
@@ -40,25 +42,11 @@ function App() {
   useEffect(() => {
     // subscribe to hash changes
     window.location.hash = "main";
-    window.addEventListener("hashchange", router);
-    return () => window.removeEventListener("hashchange", router);
+    window.addEventListener("hashchange", hashChangeHandler);
+    return () => window.removeEventListener("hashchange", hashChangeHandler);
   },[]);
 
-  /*
-  let allCountriesClone = cloneDeep(allCountries);
-  let fixedCountries = allCountries.map( x => {
-    if( x.subregion === "" ) {
-      return {
-        ...x,
-        subregion: UNCATEGORIZED_REGION
-      }
-    }
-  });
-  setAllCountries(fixedCountries);
-  */
-
   useEffect(() => {
-    console.log("regions init");
     let regionsSet = new Set(allCountries.map(y => y.subregion));
     let regionsArray = Array.from(regionsSet);
     regionsArray.push(ALL_REGIONS_SELECTED);
@@ -69,7 +57,7 @@ function App() {
   },[allCountries]);
 
 
-  function router() {
+  function hashChangeHandler() {
     const hash = window.location.hash.replace(/^#/, "");
     if(hash !== "main") {
       setCountryCode(hash);
@@ -122,10 +110,23 @@ function App() {
     )
   }
 
-  console.log("Render!");
+  function ProgressIndicator(props) {
+    if (!props.visible) {
+      return null;
+    }
+
+    return (
+      <div style={{position:"absolute", top:"30%"}}>
+        <Default size={200} color={'white'} />
+      </div>
+    );
+  }
 
   return (
     <div id="mainContainer">
+      <div className="title">
+        restcountries.eu API demo
+      </div>
       <div className="controls">
         <div className="control_container">
           Search from {selectedRegion} by country name:
@@ -178,6 +179,9 @@ function App() {
       <CountryDetails
         code={countryCode}
         closeCb={() => window.location.hash = "main"}
+      />
+      <ProgressIndicator
+        visible={requestIsPending}
       />
     </div>
   );
