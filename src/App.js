@@ -5,8 +5,6 @@ import COUNTRIES from './all_countries.json';
 import {Table} from "./Table.js";
 import format from 'number-format.js';
 
-// https://restcountries.eu/rest/v2/all
-
 export const ALL_REGIONS_SELECTED = "all regions";
 export const UNCATEGORIZED_REGION = "uncategorized";
 
@@ -14,10 +12,30 @@ function App() {
 
   const [searchStr,setSearchStr] = useState("");
   const [selectedRegion,setSelectedRegion] = useState(ALL_REGIONS_SELECTED);
-  const [allCountries,setAllCountries] = useState(COUNTRIES);
+  const [allCountries,setAllCountries] = useState([]);
   const [sortBool,setSortBool] = useState(false);
   const [countryCode,setCountryCode] = useState(undefined); // null = kosovo
   const [regions,setRegions] = useState([]);
+
+  useEffect(() => {
+      const fetchData = async () => {
+        //setRequestIsPending(true);
+        try {
+          const result = await axios.get('https://restcountries.eu/rest/v2/all',
+                                          {
+                                            timeout: 10000
+                                          });
+          //console.log(result);
+          setAllCountries(result.data);
+        } catch (err) {
+          console.error(err);
+          alert("Data fetching failed.\nPlease try again later.");
+          //setRequestIsPending(false);
+        }
+        //setRequestIsPending(false);
+      };
+      fetchData();
+    }, []);
 
   useEffect(() => {
     // subscribe to hash changes
