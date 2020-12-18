@@ -16,6 +16,16 @@ function App() {
   const [sortBool,setSortBool] = useState(false);
   const [showDetails,setShowDetails] = useState(false);
   const [countryCode,setCountryCode] = useState(-1); // null = kosovo
+  const [regions,setRegions] = useState([]);
+
+/*
+  useEffect(() => {
+    // subscribe to hash changes
+    //window.location.hash = "main";
+    window.addEventListener("hashchange", router);
+    return () => window.removeEventListener("hashchange", router);
+  },[]);
+*/
 
   /*
   let allCountriesClone = cloneDeep(allCountries);
@@ -30,22 +40,22 @@ function App() {
   setAllCountries(fixedCountries);
   */
 
-  let regionsSet = new Set(allCountries.map(y => y.subregion));
-  let regions = Array.from(regionsSet);
-  regions.push(ALL_REGIONS_SELECTED);
-  let indexOfEmptyValue = regions.indexOf("");
-  regions[indexOfEmptyValue] = UNCATEGORIZED_REGION;
-  regions.sort();
+  useEffect(() => {
+    let regionsSet = new Set(allCountries.map(y => y.subregion));
+    let regionsArray = Array.from(regionsSet);
+    regionsArray.push(ALL_REGIONS_SELECTED);
+    let indexOfEmptyValue = regionsArray.indexOf("");
+    regionsArray[indexOfEmptyValue] = UNCATEGORIZED_REGION;
+    regionsArray.sort();
+    setRegions(regionsArray);
+  },[allCountries]);
 
-  //console.log(allCountries);
-
-  function handleCountry(event) {
-    setSearchStr(event.target.value);
+/*
+  function router() {
+    const newView = window.location.hash.replace(/^#/, "");
+    console.log(newView);
   }
-
-  function changeRegion(event) {
-    setSelectedRegion(event.target.value);
-  }
+*/
 
   function showCountryDetails(code) {
     setCountryCode(code);
@@ -220,7 +230,7 @@ function App() {
           <input
             type="text"
             value={searchStr}
-            onChange={ev => handleCountry(ev)}
+            onChange={ev => setSearchStr(ev.target.value)}
             placeholder="enter country name here"
           />
         </div>
@@ -228,7 +238,7 @@ function App() {
           Select region:
           <select
             value={selectedRegion}
-            onChange={ev => changeRegion(ev)}
+            onChange={ev => setSelectedRegion(ev.target.value)}
           >
             {regions.map( region => <option key={region} value={region}>{region}</option> )}
           </select>
