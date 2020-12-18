@@ -14,13 +14,12 @@ function App() {
   const [selectedRegion,setSelectedRegion] = useState(ALL_REGIONS_SELECTED);
   const [allCountries,setAllCountries] = useState(COUNTRIES);
   const [sortBool,setSortBool] = useState(false);
-  const [showDetails,setShowDetails] = useState(false);
-  const [countryCode,setCountryCode] = useState(-1); // null = kosovo
+  const [countryCode,setCountryCode] = useState(undefined); // null = kosovo
   const [regions,setRegions] = useState([]);
 
   useEffect(() => {
     // subscribe to hash changes
-    //window.location.hash = "main";
+    window.location.hash = "main";
     window.addEventListener("hashchange", router);
     return () => window.removeEventListener("hashchange", router);
   },[]);
@@ -39,6 +38,7 @@ function App() {
   */
 
   useEffect(() => {
+    console.log("regions init");
     let regionsSet = new Set(allCountries.map(y => y.subregion));
     let regionsArray = Array.from(regionsSet);
     regionsArray.push(ALL_REGIONS_SELECTED);
@@ -50,25 +50,30 @@ function App() {
 
 
   function router() {
-    //const newView = window.location.hash.replace(/^#/, "");
-    //console.log(newView);
-    console.log("Hep!");
+    const hash = window.location.hash.replace(/^#/, "");
+    if(hash !== "main") {
+      setCountryCode(hash);
+    } else {
+      setCountryCode(undefined);
+    }
   }
 
-  function showCountryDetails(code) {
-    setCountryCode(code);
-    setShowDetails(true);
+  function handleCountryDetailsClick(code) {
+    window.location.hash = code;
   }
 
   function CountryDetails(props) {
 
-    if(!props.show) {
+    if(props.code === undefined) {
       return null;
     }
 
-    console.log(props.code);
     let countryData = allCountries.find(x => x.numericCode === props.code);
-    console.log(countryData);
+
+    if(countryData === undefined) {
+      window.location.hash = "main";
+      return null;
+    }
 
     return (
         <div className="countryDetailsBackground" onClick={ props.closeCb }>
@@ -126,10 +131,10 @@ function App() {
 
   function TableRow(props) {
     return (
-      <div className="countryline" onClick={() => showCountryDetails(props.code)}>
+      <div className="countryline" onClick={() => handleCountryDetailsClick(props.code)}>
         <div className="countrydetail flag">
           {/*<img src={props.flag} alt={""} height={50} width={100} />*/}
-          <img src={""} alt={""} height={50} width={100} />
+          <img src='https://restcountries.eu/data/afg.svg' alt={""} height={50} width={100} />
         </div>
         <div className="countrydetail name">
           {props.name}
@@ -220,6 +225,8 @@ function App() {
     )
   }
 
+  console.log("Render!");
+
   return (
     <div id="mainContainer">
       <div className="controls">
@@ -261,8 +268,7 @@ function App() {
       </div>
       <CountryDetails
         code={countryCode}
-        show={showDetails}
-        closeCb={() => setShowDetails(false)}
+        closeCb={() => window.location.hash = "main"}
       >
       </CountryDetails>
     </div>
