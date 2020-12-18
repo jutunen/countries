@@ -7,8 +7,8 @@ import format from 'number-format.js';
 
 // https://restcountries.eu/rest/v2/all
 
-export const ALL_REGIONS_SELECTED = "All";
-export const UNCATEGORIZED_REGION = "Uncategorized";
+export const ALL_REGIONS_SELECTED = "all regions";
+export const UNCATEGORIZED_REGION = "uncategorized";
 
 function App() {
 
@@ -110,7 +110,7 @@ function App() {
     <div id="mainContainer">
       <div className="controls">
         <div className="control_container">
-          Search for country by name:
+          Search from {selectedRegion} by country name:
           <div className="control_subcontainer">
             <input
               type="text"
@@ -128,13 +128,22 @@ function App() {
           </div>
         </div>
         <div className="control_container">
-          Select region:
-          <select
-            value={selectedRegion}
-            onChange={ev => setSelectedRegion(ev.target.value)}
-          >
-            {regions.map( region => <option key={region} value={region}>{region}</option> )}
-          </select>
+          Show countries by region:
+          <div className="control_subcontainer">
+            <select
+              value={selectedRegion}
+              onChange={ev => setSelectedRegion(ev.target.value)}
+            >
+              {regions.map( region => <option key={region} value={region}>{region}</option> )}
+            </select>
+            <button
+              type="button"
+              className="button"
+              onClick={() => setSelectedRegion(ALL_REGIONS_SELECTED)}
+            >
+              Reset
+            </button>
+          </div>
         </div>
       </div>
       <div>

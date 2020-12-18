@@ -46,8 +46,8 @@ function TableRow(props) {
   return (
     <div className="countryline" onClick={() => window.location.hash = props.code}>
       <div className="countrydetail flag">
-        <img src={props.flag} alt={""} height={50} />
-        {/*<img src='https://restcountries.eu/data/afg.svg' alt={""} height={50} />*/}
+        {/*<img src={props.flag} alt={""} height={50} />*/}
+        <img src='https://restcountries.eu/data/afg.svg' alt={""} height={50} />
       </div>
       <div className="countrydetail name">
         {props.name}
